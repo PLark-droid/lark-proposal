@@ -11,16 +11,22 @@
 
 FIT PLACE24様は全国170店舗以上を展開し、今後さらなる店舗拡大を目指されています。現在、複数のツール（Lark、Google Workspace、Notion、LINE等）が併存し、情報の分散と業務の非効率が生じています。
 
-**本提案のゴール**：
-- **Larkへの統合**により、ツール乱立を解消
-- **店舗・オーナー管理の一元化**で問い合わせ対応工数を50%削減
-- **Lark Baseによるデータ可視化**で経営判断を迅速化
-- **店舗拡大に対応できる基盤**を構築
+### 本提案のゴール
 
-**想定効果**：
-- ITツールコスト：年間30-40%削減
-- 問い合わせ対応時間：50%削減
-- 意思決定スピード：2倍向上
+| ゴール | 期待効果 |
+|:------:|:--------:|
+| Larkへの統合 | ツール乱立を解消 |
+| 店舗・オーナー管理の一元化 | 問い合わせ対応工数50%削減 |
+| Lark Baseによるデータ可視化 | 経営判断を迅速化 |
+| 店舗拡大に対応できる基盤 | スケーラブルな成長 |
+
+### 想定効果
+
+| 指標 | 効果 |
+|:----:|:----:|
+| ITツールコスト | 年間30-40%削減 |
+| 問い合わせ対応時間 | 50%削減 |
+| 意思決定スピード | 2倍向上 |
 
 ---
 
@@ -29,114 +35,143 @@ FIT PLACE24様は全国170店舗以上を展開し、今後さらなる店舗拡
 ### 1.1 現在のツール構成
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    subgraph NOW["現状：ツール分散"]
-        direction TB
-        A["💬 Lark"]
-        B["📱 LINE"]
-        C["📄 Google WS"]
-        D["📝 Notion"]
-        E["📅 Gカレンダー"]
-        F["🎥 Meet"]
-        G["🏋️ hacomono"]
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '16px', 'fontFamily': 'arial'}}}%%
+block-beta
+    columns 2
+
+    block:comm:1
+        columns 1
+        comm_title["📨 コミュニケーション"]
+        Lark["Lark"]
+        LINE["LINE"]
     end
 
-    style NOW fill:#fff0f0,stroke:#e53935,stroke-width:2px
-    style A fill:#1a73e8,color:#fff
-    style B fill:#06c755,color:#fff
-    style C fill:#fbbc04,color:#000
-    style D fill:#191919,color:#fff
-    style E fill:#4285f4,color:#fff
-    style F fill:#00897b,color:#fff
-    style G fill:#7c4dff,color:#fff
+    block:docs:1
+        columns 1
+        docs_title["📄 ドキュメント"]
+        GWS["Google WS"]
+        Notion["Notion"]
+    end
+
+    block:schedule:1
+        columns 1
+        schedule_title["📅 スケジュール"]
+        GCal["Googleカレンダー"]
+        Meet["Google Meet"]
+    end
+
+    block:crm:1
+        columns 1
+        crm_title["💼 顧客管理"]
+        hacomono["hacomono"]
+    end
+
+    style comm fill:#e3f2fd
+    style docs fill:#fff3e0
+    style schedule fill:#e8f5e9
+    style crm fill:#f3e5f5
 ```
 
-**問題点**: 情報分散・重複管理・ツール切替コスト発生
+**⚠️ 問題点**: 7つのツールが分散 → 情報の重複・切替コスト発生
+
+---
 
 ### 1.2 特定された課題
 
-| # | 課題 | 影響 | 深刻度 |
-|---|------|------|:------:|
-| 1 | **LINEグループの乱立** | オーナー・店舗・工事業者ごとにグループが増殖 | 🔴 高 |
-| 2 | **問い合わせ対応の属人化** | 開業時・運営時の問い合わせが特定担当者に集中 | 🔴 高 |
-| 3 | **データの見える化不足** | 各店舗の売上・会員数が一覧化されていない | 🔴 高 |
-| 4 | **ツールの分散** | Lark/Google/Notion間でドキュメントが散在 | 🟡 中 |
-| 5 | **店舗拡大への対応** | 170店舗→拡大時、現行体制では限界 | 🟡 中 |
+| 優先度 | 課題 | 影響 |
+|:------:|------|------|
+| 🔴 | **LINEグループの乱立** | 情報が追えない |
+| 🔴 | **問い合わせの属人化** | 特定担当者に集中 |
+| 🔴 | **データの見える化不足** | 一覧化されていない |
+| 🟡 | **ツールの分散** | ドキュメントが散在 |
+| 🟡 | **店舗拡大への対応** | 現行体制では限界 |
+
+---
 
 ### 1.3 課題の詳細分析
 
 #### 課題①：LINEグループの乱立
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '13px'}}}%%
-flowchart LR
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
     HQ["🏢 本部"]
 
-    HQ --> G1["オーナーA\n開業"]
-    HQ --> G2["オーナーA\n運営"]
-    HQ --> G3["オーナーB\n開業"]
-    HQ --> G4["店舗001"]
-    HQ --> G5["店舗002"]
-    HQ --> G6["工事業者X"]
-    HQ --> G7["...他多数"]
+    subgraph groups["LINEグループ（増殖中）"]
+        G1["オーナーA開業"]
+        G2["オーナーA運営"]
+        G3["オーナーB開業"]
+        G4["店舗001"]
+        G5["工事業者X"]
+        G6["...多数"]
+    end
+
+    HQ --> groups
 
     style HQ fill:#06c755,color:#fff
-    style G1 fill:#06c755,color:#fff
-    style G2 fill:#06c755,color:#fff
-    style G3 fill:#06c755,color:#fff
-    style G4 fill:#06c755,color:#fff
-    style G5 fill:#06c755,color:#fff
-    style G6 fill:#06c755,color:#fff
-    style G7 fill:#ff5252,color:#fff
+    style groups fill:#ffebee,stroke:#c62828
+    style G6 fill:#ef5350,color:#fff
 ```
 
-**問題点**：
-- ❌ 重要情報が埋もれる
-- ❌ 対応者が不明
-- ❌ 検索困難
-- ❌ 引継ぎ困難
+| 問題 | 影響 |
+|:----:|------|
+| ❌ | 重要情報が埋もれる |
+| ❌ | 対応者が不明 |
+| ❌ | 検索困難 |
+| ❌ | 引継ぎ困難 |
+
+---
 
 #### 課題②：問い合わせ対応の肥大化
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    A["👤 オーナー\n店舗"] --> B["📱 LINE\n📧 メール"]
-    B --> C["👨‍💼 担当者A\n属人化"]
-    C --> D["⚠️ 対応漏れ\n遅延"]
-    D --> E["😠 クレーム"]
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
+    A["👤 オーナー/店舗"]
+    B["📱 LINE / メール"]
+    C["👨‍💼 担当者A"]
+    D["⚠️ 対応漏れ"]
+    E["😠 クレーム"]
 
-    style C fill:#ff5252,color:#fff
+    A --> B --> C
+    C --> D --> E
+
+    style C fill:#ef5350,color:#fff
     style D fill:#ff9800,color:#fff
-    style E fill:#d32f2f,color:#fff
+    style E fill:#c62828,color:#fff
 ```
 
-**対応件数（推定）**：月間 約230件
+**月間対応件数（推定）**
 
-| カテゴリ | 件数/月 |
-|----------|---------|
-| 開業準備関連 | 50件 |
+| カテゴリ | 件数 |
+|:--------:|:----:|
+| 開業準備 | 50件 |
 | 運営相談 | 100件 |
 | 設備トラブル | 30件 |
 | その他 | 50件 |
+| **合計** | **230件** |
+
+---
 
 #### 課題③：データの見える化不足
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 flowchart TB
-    A["🏋️ hacomono\nCRMにデータ蓄積"]
-    A --> B["⚠️ 活用されず"]
-    B --> C1["❌ 数字が出ない"]
-    B --> C2["❌ 比較できない"]
-    B --> C3["❌ 問題発見遅れ"]
+    A["🏋️ hacomono<br/>データ蓄積中"]
+    B["⚠️ 活用されず"]
+
+    subgraph problems["発生している問題"]
+        C1["数字が出ない"]
+        C2["比較できない"]
+        C3["問題発見が遅れる"]
+    end
+
+    A --> B --> problems
 
     style A fill:#7c4dff,color:#fff
-    style B fill:#ff5252,color:#fff
-    style C1 fill:#ffebee,stroke:#e53935
-    style C2 fill:#ffebee,stroke:#e53935
-    style C3 fill:#ffebee,stroke:#e53935
+    style B fill:#ef5350,color:#fff
+    style problems fill:#ffebee
 ```
 
 ---
@@ -146,10 +181,9 @@ flowchart TB
 ### 2.1 To-Be 構成
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    subgraph LARK["🟦 Lark Suite"]
-        direction TB
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
+    subgraph lark["🟦 Lark Suite（統合）"]
         L1["💬 チャット"]
         L2["📄 Docs"]
         L3["📅 Calendar"]
@@ -159,191 +193,173 @@ flowchart LR
         L7["🤖 Bot"]
     end
 
-    subgraph KEEP["継続利用"]
+    subgraph keep["継続利用"]
         K1["🏋️ hacomono"]
-        K2["📱 LINE\n会員向け"]
+        K2["📱 LINE<br/>会員向けのみ"]
     end
 
-    LARK <--> |API| K1
+    lark <-->|API連携| K1
 
-    style LARK fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    style KEEP fill:#f5f5f5,stroke:#9e9e9e
-    style L1 fill:#1a73e8,color:#fff
-    style L2 fill:#1a73e8,color:#fff
-    style L3 fill:#1a73e8,color:#fff
-    style L4 fill:#1a73e8,color:#fff
-    style L5 fill:#1a73e8,color:#fff
-    style L6 fill:#1a73e8,color:#fff
-    style L7 fill:#1a73e8,color:#fff
-    style K1 fill:#7c4dff,color:#fff
-    style K2 fill:#06c755,color:#fff
+    style lark fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style keep fill:#fafafa,stroke:#9e9e9e
 ```
+
+---
 
 ### 2.2 残すもの・置き換えるもの
 
 | ツール | 判断 | 理由 |
-|--------|:----:|------|
-| **Lark** | ✅ 拡張 | 既に導入済み。全機能をフル活用 |
-| **hacomono** | ✅ 継続 | CRMとして継続、Lark Baseと連携 |
-| **LINE（会員向け）** | ✅ 継続 | 会員との連絡手段として継続 |
-| Google Workspace | ❌ 廃止 | Lark Docs/Sheetsに移行 |
-| Notion | ❌ 廃止 | Lark Wiki/Docsに移行 |
-| Google Calendar | ❌ 廃止 | Lark Calendarに移行 |
-| Google Meet | ❌ 廃止 | Lark Meetingsに移行 |
-| LINE（業務用） | ❌ 廃止 | Lark Messengerに移行 |
+|:------:|:----:|------|
+| **Lark** | ✅ 拡張 | 全機能をフル活用 |
+| **hacomono** | ✅ 継続 | Lark Baseと連携 |
+| **LINE（会員向け）** | ✅ 継続 | 会員連絡用 |
+| Google Workspace | ❌ | → Lark Docs |
+| Notion | ❌ | → Lark Wiki |
+| Google Calendar | ❌ | → Lark Calendar |
+| Google Meet | ❌ | → Lark Meetings |
+| LINE（業務用） | ❌ | → Lark Messenger |
 
 ---
 
 ## 3. ソリューション詳細
 
-### 3.1 課題①解決：LINEグループ → Lark組織チャット
+### 3.1 課題①解決：Lark組織チャット
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '13px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 flowchart TB
-    subgraph HQ["📁 本部"]
-        H1["📢 全社連絡"]
-        H2["💬 経営会議"]
+    subgraph org["🟦 Lark 組織構造"]
+        subgraph hq["📁 本部"]
+            H1["全社連絡"]
+            H2["経営会議"]
+        end
+
+        subgraph fc["📁 FCオーナー"]
+            F1["連絡"]
+            F2["開業準備"]
+            F3["運営相談"]
+        end
+
+        subgraph store["📁 店舗運営"]
+            S1["連絡"]
+            S2["トラブル報告"]
+        end
     end
 
-    subgraph FC["📁 FCオーナー"]
-        F1["📢 連絡"]
-        F2["📋 開業準備"]
-        F3["🔧 運営相談"]
-    end
-
-    subgraph ST["📁 店舗運営"]
-        S1["📢 連絡"]
-        S2["🛠️ トラブル"]
-    end
-
-    subgraph PT["📁 パートナー"]
-        P1["🏗️ 工事"]
-        P2["📦 発注"]
-    end
-
-    style HQ fill:#bbdefb,stroke:#1976d2
-    style FC fill:#c8e6c9,stroke:#388e3c
-    style ST fill:#fff3e0,stroke:#f57c00
-    style PT fill:#f3e5f5,stroke:#7b1fa2
+    style hq fill:#bbdefb
+    style fc fill:#c8e6c9
+    style store fill:#fff3e0
 ```
 
-**メリット**：
 | 機能 | 効果 |
-|------|------|
+|:----:|:----:|
 | スレッド | 会話整理 |
-| 検索 | 過去情報発見 |
-| ファイル | 一元管理 |
+| 検索 | 即座に発見 |
 | 権限 | アクセス制御 |
 | Bot | 自動振分 |
 
-### 3.2 課題②解決：問い合わせ対応の自動化
+---
+
+### 3.2 課題②解決：問い合わせ自動化
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 flowchart TB
     A["👤 問い合わせ"]
-    B["🤖 Bot受付\n24時間"]
-    C{"カテゴリ\n選択"}
-    D["📚 FAQ\n自動回答"]
-    E["✅ 即時解決\n30%"]
-    F["✅ Approval\n自動アサイン"]
-    G["📊 Base\n履歴記録"]
+    B["🤖 Bot<br/>24時間受付"]
+    C["📚 FAQ自動回答"]
 
-    A --> B --> C --> D
-    D -->|解決| E
-    D -->|未解決| F --> G
+    D["✅ 解決<br/>30%"]
+    E["✅ 担当者へ<br/>自動アサイン"]
+    F["📊 履歴記録"]
 
-    style B fill:#1a73e8,color:#fff
-    style D fill:#34a853,color:#fff
-    style E fill:#00c853,color:#fff
-    style F fill:#fbbc04,color:#000
-    style G fill:#ea4335,color:#fff
+    A --> B --> C
+    C -->|解決| D
+    C -->|未解決| E --> F
+
+    style B fill:#1976d2,color:#fff
+    style C fill:#388e3c,color:#fff
+    style D fill:#4caf50,color:#fff
+    style E fill:#ff9800,color:#fff
 ```
 
-**期待効果**：
-
 | 効果 | 詳細 |
-|------|------|
+|:----:|:----:|
 | FAQ自動回答 | 30%即時解決 |
 | 自動アサイン | 属人化解消 |
 | 履歴蓄積 | ナレッジ化 |
-| 時間計測 | SLA管理 |
 
-### 3.3 課題③解決：Lark Baseによるデータ可視化
+---
+
+### 3.3 課題③解決：データ可視化
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    subgraph SRC["hacomono"]
-        A1["👥 会員"]
-        A2["💰 売上"]
-        A3["📅 予約"]
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
+    subgraph src["🏋️ hacomono"]
+        H1["会員データ"]
+        H2["売上データ"]
+        H3["予約データ"]
     end
 
-    B["🔄 API\n日次同期"]
+    API["🔄 API<br/>日次同期"]
 
-    subgraph DST["Lark Base"]
-        C1["📈 サマリー"]
-        C2["🏪 店舗比較"]
-        C3["🚨 アラート"]
+    subgraph dst["📊 Lark Base"]
+        L1["サマリー"]
+        L2["店舗比較"]
+        L3["アラート"]
     end
 
-    SRC --> B --> DST
+    src --> API --> dst
 
-    style SRC fill:#7c4dff,color:#fff
-    style B fill:#ff9800,color:#fff
-    style DST fill:#1a73e8,color:#fff
+    style src fill:#7c4dff,color:#fff
+    style API fill:#ff9800,color:#fff
+    style dst fill:#1976d2,color:#fff
 ```
 
-#### 経営ダッシュボードイメージ
+#### 経営ダッシュボード例
 
 | 指標 | 値 | 前月比 |
-|------|-----|--------|
+|:----:|:----:|:------:|
 | 総会員数 | 45,230人 | +2.3% |
 | 総売上 | ¥148.5M | +5.1% |
 | 平均客単価 | ¥3,280 | +1.2% |
 
 | 店舗 | 会員数 | 売上 | 状態 |
-|------|--------|------|:----:|
+|:----:|:------:|:----:|:----:|
 | 渋谷店 | 1,250 | ¥4.1M | 🟢 |
 | 新宿店 | 980 | ¥3.2M | 🟡 |
 | 池袋店 | 650 | ¥2.1M | 🔴 |
 
-**🚨 アラート例**：
-- 池袋店: 退会率が基準値超過
-- 横浜店: 売上が前月比-15%
+---
 
-### 3.4 店舗拡大対応：開業オペレーションの標準化
+### 3.4 開業オペレーション標準化
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '12px'}}}%%
 gantt
-    title 新店舗開業（90日）
+    title 新店舗開業（90日間）
     dateFormat X
     axisFormat %s
 
     section 契約準備
-    FC契約     :done, 90, 80
-    物件契約   :done, 85, 75
-    設計確定   :done, 80, 70
-    機器発注   :done, 75, 65
+    FC契約      :done, 90, 80
+    物件契約    :done, 85, 75
+    設計確定    :done, 80, 70
 
     section 工事
-    内装工事   :active, 60, 40
-    電気工事   :active, 55, 40
-    機器搬入   :35, 30
+    内装工事    :active, 60, 35
+    機器搬入    :35, 30
 
     section 開業準備
-    採用       :30, 15
-    システム   :20, 10
-    オープン   :milestone, 0, 0
+    採用        :30, 15
+    オープン    :milestone, 0, 0
 ```
 
-**自動化ポイント**：
+**自動化ポイント**
 - ✅ タスク完了 → 次担当者に自動通知
 - ✅ 期限超過 → エスカレーション
-- ✅ 進捗 → 本部ダッシュボードに自動反映
+- ✅ 進捗 → ダッシュボードに自動反映
 
 ---
 
@@ -351,102 +367,76 @@ gantt
 
 ### 4.1 コスト比較
 
-| 項目 | 現状/月 | 導入後/月 | 差額 |
-|------|---------|-----------|------|
-| Google WS（50名） | ¥68,000 | ¥0 | ¥68,000 |
-| Notion（30名） | ¥45,000 | ¥0 | ¥45,000 |
-| Lark Pro（80名） | ¥0 | ¥120,000 | -¥120,000 |
-| **合計** | **¥113,000** | **¥120,000** | **+¥7,000** |
+| 項目 | 現状/月 | 導入後/月 |
+|:----:|:-------:|:---------:|
+| Google WS | ¥68,000 | ¥0 |
+| Notion | ¥45,000 | ¥0 |
+| Lark Pro | ¥0 | ¥120,000 |
+| **合計** | **¥113,000** | **¥120,000** |
 
-※ コストは微増だが、業務効率化効果で十分回収
+※ 微増だが、業務効率化効果で十分回収
+
+---
 
 ### 4.2 業務効率化効果
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 pie showData
-    title 月間削減時間（130時間）
-    "LINE管理" : 40
-    "問合せ対応" : 60
-    "ツール切替" : 20
-    "会議準備" : 10
+    title 月間削減時間（計130時間）
+    "LINE管理 40h" : 40
+    "問合せ対応 60h" : 60
+    "ツール切替 20h" : 20
+    "会議準備 10h" : 10
 ```
 
-| 効果項目 | 削減時間/月 | 金額換算 |
-|----------|------------|----------|
-| LINE管理工数 | 40時間 | ¥120,000 |
-| 問い合わせ対応 | 60時間 | ¥180,000 |
-| ツール切替・検索 | 20時間 | ¥60,000 |
-| 会議準備 | 10時間 | ¥30,000 |
-| **合計** | **130時間** | **¥390,000/月** |
+| 効果項目 | 削減時間 | 金額換算 |
+|:--------:|:--------:|:--------:|
+| LINE管理 | 40h | ¥120,000 |
+| 問い合わせ対応 | 60h | ¥180,000 |
+| ツール切替 | 20h | ¥60,000 |
+| 会議準備 | 10h | ¥30,000 |
+| **合計** | **130h** | **¥390,000/月** |
 
-### 🎯 年間削減効果: 約470万円相当
-
-### 4.3 定性的効果
-
-- **意思決定スピード向上**: データがリアルタイムで見える
-- **店舗拡大の加速**: 開業オペレーションが標準化
-- **属人化解消**: ナレッジが組織に蓄積
-- **従業員満足度向上**: ツールのストレス軽減
+### 🎯 年間削減効果: 約470万円
 
 ---
 
 ## 5. 導入スケジュール
 
-### 全体スケジュール（3ヶ月）
-
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '12px'}}}%%
 gantt
-    title Lark統合プロジェクト
+    title 導入スケジュール（3ヶ月）
     dateFormat YYYY-MM-DD
 
     section Phase1 設計
-    ヒアリング    :p1a, 2025-01-06, 7d
-    組織設計      :p1b, 2025-01-06, 14d
-    Base設計      :p1c, 2025-01-13, 14d
-    Bot開発       :p1d, 2025-01-20, 14d
+    ヒアリング    :2025-01-06, 7d
+    設計作業      :2025-01-13, 14d
 
     section Phase2 展開
-    本部展開      :p2a, 2025-02-03, 7d
-    移行作業      :p2b, 2025-02-03, 14d
-    オーナー展開  :p2d, 2025-02-17, 14d
+    本部展開      :2025-02-03, 7d
+    移行作業      :2025-02-10, 14d
 
     section Phase3 定着
-    全店舗展開    :p3a, 2025-03-03, 7d
-    効果測定      :p3c, 2025-03-10, 14d
-    運用定着      :p3d, 2025-03-17, 14d
+    全店舗展開    :2025-03-03, 7d
+    効果測定      :2025-03-10, 21d
 ```
 
-### Phase 1: 設計・準備（Week 1-4）
+### 各フェーズの詳細
 
-- [ ] 現状業務フローの詳細ヒアリング
-- [ ] Lark組織構造の設計
-- [ ] Lark Base（ダッシュボード）設計
-- [ ] hacomono API連携設計
-- [ ] 問い合わせBot設計
-
-### Phase 2: 移行・展開（Week 5-8）
-
-- [ ] 本部メンバーへの先行展開
-- [ ] Google Workspace → Lark Docs移行
-- [ ] Notion → Lark Wiki移行
-- [ ] LINE業務グループ → Lark移行
-- [ ] FCオーナーへの展開・トレーニング
-
-### Phase 3: 定着・最適化（Week 9-12）
-
-- [ ] 全店舗展開完了
-- [ ] 旧ツール停止
-- [ ] 効果測定・KPIレビュー
-- [ ] 運用ルールの最終化
+| Phase | 期間 | 主な作業 |
+|:-----:|:----:|----------|
+| **1** | Week 1-4 | ヒアリング、設計、Bot開発 |
+| **2** | Week 5-8 | 本部展開、移行、トレーニング |
+| **3** | Week 9-12 | 全店舗展開、効果測定 |
 
 ---
 
 ## 6. 成功のためのポイント
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 mindmap
     root((成功の鍵))
         経営層
@@ -460,95 +450,75 @@ mindmap
             サポート
         継続改善
             月次レビュー
-            新機能活用
 ```
 
 ---
 
 ## 7. なぜ今Larkなのか
 
-### 7.1 店舗拡大フェーズに最適
+### 7.1 店舗拡大への対応
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    A["🏪 現在\n170店舗"]
-    B["🏪🏪 目標\n300店舗"]
-    C["🏪🏪🏪 将来\n500店舗+"]
-    D["🟦 Lark\n基盤整備"]
-    E["✅ 成長\n実現"]
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+flowchart TB
+    A["🏪 現在<br/>170店舗"]
+    B["🏪🏪 目標<br/>300店舗"]
+    C["🏪🏪🏪 将来<br/>500店舗+"]
+
+    D["📈 複雑化"]
+    E["👤 属人化限界"]
+    F["📊 データ必須"]
+
+    G["🟦 Lark基盤"]
+    H["✅ 成長実現"]
 
     A --> B --> C
-    B --> D --> E
+    B --> D & E & F
+    D & E & F --> G --> H
 
     style A fill:#ffeb3b,color:#000
     style B fill:#ff9800,color:#fff
     style C fill:#f44336,color:#fff
-    style D fill:#1a73e8,color:#fff
-    style E fill:#4caf50,color:#fff
+    style G fill:#1976d2,color:#fff
+    style H fill:#4caf50,color:#fff
 ```
 
-**店舗数が増えるほど**：
-- 📈 情報管理の複雑さは指数関数的に増加
-- 👤 属人的な対応は限界に達する
-- 📊 データに基づく経営判断が不可欠に
+---
 
-→ **今のうちに基盤を整備** → スケーラブルな成長を実現
+### 7.2 競合比較
 
-### 7.2 Larkの強み（フランチャイズ運営向け）
-
-| 機能 | メリット |
-|------|----------|
-| **組織構造** | 本部→オーナー→店舗の階層管理 |
-| **Base** | 全店舗KPIの一元管理・可視化 |
-| **Approval** | 承認フローの標準化・自動化 |
-| **Bot** | 定型問い合わせの自動対応 |
-| **Wiki** | マニュアル・FAQの一元管理 |
-| **外部招待** | オーナー・業者を柔軟に招待 |
-
-### 7.3 競合ツールとの比較
-
-| 要件 | Lark | Slack+他 | Teams |
-|------|:----:|:--------:|:-----:|
+| 要件 | Lark | Slack | Teams |
+|:----:|:----:|:-----:|:-----:|
 | オールインワン | ⭕ | ❌ | 🔺 |
 | 外部ユーザー | ⭕ | 🔺 | 🔺 |
 | ノーコードDB | ⭕ | ❌ | ❌ |
 | ワークフロー | ⭕ | 🔺 | 🔺 |
 | コスト | ◎ | ❌ | 🔺 |
-| 導入しやすさ | ⭕ | 🔺 | ❌ |
 
 ---
 
 ## 8. 次のステップ
 
-### 即時アクション
-
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    A["1️⃣ ヒアリング"]
-    B["2️⃣ PoC\n2-4週間"]
-    C["3️⃣ 契約"]
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '16px'}}}%%
+flowchart TB
+    A["1️⃣ ヒアリング<br/>業務フロー確認"]
+    B["2️⃣ PoC実施<br/>2-4週間"]
+    C["3️⃣ 契約<br/>見積・導入支援"]
 
     A --> B --> C
 
-    style A fill:#1a73e8,color:#fff
-    style B fill:#34a853,color:#fff
-    style C fill:#fbbc04,color:#000
+    style A fill:#1976d2,color:#fff
+    style B fill:#388e3c,color:#fff
+    style C fill:#ff9800,color:#fff
 ```
 
-| ステップ | 内容 |
-|----------|------|
-| **1. ヒアリング** | 業務フロー確認、優先課題特定 |
-| **2. PoC** | 本部1チームで先行、効果検証 |
-| **3. 契約** | Lark見積取得、導入支援検討 |
+---
 
 ### お問い合わせ
 
-本提案についてのご質問・ご相談は下記までお気軽にご連絡ください。
-
 | 項目 | 内容 |
-|------|------|
+|:----:|:----:|
 | 会社名 | [提案会社名] |
 | 担当者 | [担当者名] |
 | Email | [email] |
@@ -560,58 +530,54 @@ flowchart LR
 
 ### A. Lark機能一覧
 
-| 機能 | 説明 | FIT PLACE24での活用 |
-|------|------|-------------------|
-| Messenger | チャット | 本部-オーナー-店舗連絡 |
-| Docs | ドキュメント | マニュアル、議事録 |
-| Sheets | スプレッドシート | 計画表、一覧管理 |
+| 機能 | 説明 | 活用例 |
+|:----:|------|--------|
+| Messenger | チャット | 本部-店舗連絡 |
+| Docs | ドキュメント | マニュアル |
 | Base | ノーコードDB | KPIダッシュボード |
-| Calendar | カレンダー | 予定共有 |
-| Meetings | ビデオ会議 | オーナー会議 |
-| Approval | 承認フロー | 申請・承認の自動化 |
-| Wiki | ナレッジ | FAQ、業務マニュアル |
-| Bot | チャットボット | 問い合わせ自動対応 |
+| Approval | 承認フロー | 申請自動化 |
+| Bot | チャットボット | 問い合わせ対応 |
 
-### B. hacomono連携イメージ
+---
+
+### B. hacomono連携
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 flowchart TB
-    subgraph HC["🏋️ hacomono"]
+    subgraph hc["hacomono"]
         H1["会員"]
         H2["売上"]
         H3["予約"]
     end
 
-    API["🔄 API連携"]
+    API["🔄 API"]
 
-    subgraph LB["📊 Lark Base"]
+    subgraph lb["Lark Base"]
         L1["集計"]
         L2["比較"]
         L3["アラート"]
     end
 
-    NT["💬 Lark通知"]
+    NT["💬 通知"]
 
-    HC --> API --> LB
+    hc --> API --> lb
     L3 --> NT
 
-    style HC fill:#7c4dff,color:#fff
-    style API fill:#ff9800,color:#fff
-    style LB fill:#1a73e8,color:#fff
-    style NT fill:#4caf50,color:#fff
+    style hc fill:#7c4dff,color:#fff
+    style lb fill:#1976d2,color:#fff
 ```
+
+---
 
 ### C. 用語集
 
 | 用語 | 説明 |
-|------|------|
-| Lark Base | ノーコードDB（Airtable類似） |
-| Approval | 承認ワークフロー機能 |
-| hacomono | フィットネス業界向けCRM |
+|:----:|------|
+| Lark Base | ノーコードDB |
+| Approval | 承認ワークフロー |
+| hacomono | フィットネスCRM |
 | FC | フランチャイズ |
-| KPI | 重要業績評価指標 |
-| SLA | サービス品質保証 |
 
 ---
 
